@@ -17,6 +17,10 @@ func main() {
 	fmt.Println(cfg.Storage)
 	fmt.Println(cfg.HTTPServer)
 	fmt.Println(cfg.Address)
+	fmt.Println()
 
 	// TODO: init config: cleanenv
+	cfgnew := config.MustLoad()
+	fmt.Println(cfgnew)
+
 }
