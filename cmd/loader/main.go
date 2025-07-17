@@ -3,24 +3,58 @@ package main
 import (
 	"fmt"
 	"log/slog"
+	"os"
 
 	"github.com/stevenstr/yaml_config_loader/internal/config"
 )
 
+const (
+	envLocal = "local"
+	envDev   = "dev"
+	envProd  = "prod"
+)
+
 func main() {
-	// TODO: init config: simple
-	cfg, err := config.LoadConfig("./config/local.yaml")
-	if err != nil {
-		slog.Error(err.Error())
+	// Done: init config: simple
+	// cfg, err := config.LoadConfig("./config/local.yaml")
+	// if err != nil {
+	// 	slog.Error(err.Error())
+	// }
+	// fmt.Println(cfg.Env)
+	// fmt.Println(cfg.Storage)
+	// fmt.Println(cfg.HTTPServer)
+	// fmt.Println(cfg.Address)
+	// fmt.Println()
+
+	// Done: init config: cleanenv
+	cfg := config.MustLoad()
+	fmt.Println(cfg)
+
+	// Done: init logger: slog
+	log := setupLogger(cfg.Env)
+	log.Info("starting loader service...", slog.String("env", cfg.Env))
+	log.Debug("debug messages are enable!")
+
+}
+
+func setupLogger(env string) *slog.Logger {
+	var log *slog.Logger
+
+	switch env {
+	case envLocal:
+		log = slog.New(
+			slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelDebug}),
+		)
+	case envDev:
+		log = slog.New(
+			slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelDebug}),
+		)
+	case envProd:
+		// для прода, json для grafana kibana
+		log = slog.New(
+			slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelInfo}),
+		)
 	}
-	fmt.Println(cfg.Env)
-	fmt.Println(cfg.Storage)
-	fmt.Println(cfg.HTTPServer)
-	fmt.Println(cfg.Address)
-	fmt.Println()
 
-	// TODO: init config: cleanenv
-	cfgnew := config.MustLoad()
-	fmt.Println(cfgnew)
-
+	return log
 }
