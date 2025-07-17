@@ -6,6 +6,7 @@ import (
 	"os"
 
 	"github.com/stevenstr/yaml_config_loader/internal/config"
+	"github.com/stevenstr/yaml_config_loader/internal/storage/sqlite"
 )
 
 const (
@@ -34,6 +35,14 @@ func main() {
 	log := setupLogger(cfg.Env)
 	log.Info("starting loader service...", slog.String("env", cfg.Env))
 	log.Debug("debug messages are enable!")
+
+	// TODO: storage: sqlite3
+	storage, err := sqlite.New(cfg.Storage)
+	if err != nil {
+		slog.Error(err.Error())
+		os.Exit(1)
+	}
+	_ = storage
 
 }
 
